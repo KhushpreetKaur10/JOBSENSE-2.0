@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>JobSense AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<div class="hero">
+
+
+    <h1>
+        🚀 JobSense AI
+    </h1>
+
+
+    <p>
+        Semantic Job Search & Recommendation Engine
+    </p>
+
+
+    <form action="/search" method="get">
+
+
+        <input
+            type="text"
+            name="query"
+            placeholder="Search jobs e.g. Python Developer, ML Engineer..."
+            required
+        >
+
+
+        <button>
+            Search Jobs
+        </button>
+
+
+    </form>
+
+
+</div>
+
+
+
+</body>
+
+</html>

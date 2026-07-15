@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+
+.venv/
+venv/
+env/
+
+.ipynb_checkpoints/
+
+models/embeddings.npy
+models/faiss_index.bin
+
+data/jobs.xlsx
+data/jobs_30k.csv
+
+.DS_Store
+Thumbs.db

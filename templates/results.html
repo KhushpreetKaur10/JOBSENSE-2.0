@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+
+<head>
+
+<title>
+Job Results
+</title>
+
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}">
+
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<h1>
+🚀 JobSense
+</h1>
+
+
+<h2>
+Results for "{{query}}"
+</h2>
+
+
+
+{% if jobs|length == 0 %}
+
+
+<h3>
+No jobs found
+</h3>
+
+
+{% endif %}
+
+
+
+{% for job in jobs %}
+
+
+
+<div class="job-card">
+
+
+<h2>
+{{job.title}}
+</h2>
+
+
+
+<p>
+🏢 <b>Company:</b>
+{{job.company}}
+</p>
+
+
+
+<p>
+📍 <b>Location:</b>
+{{job.location}}
+</p>
+
+
+
+<p>
+💼 <b>Experience:</b>
+{{job.experience}}
+</p>
+
+
+
+<p>
+💰 <b>Salary:</b>
+{{job.salary}}
+</p>
+
+
+
+<p>
+⭐ <b>Company Rating:</b>
+{{job.rating}}
+</p>
+
+
+
+<p>
+👥 <b>Reviews:</b>
+{{job.reviews}}
+</p>
+
+
+
+<p>
+📅 <b>Posted:</b>
+{{job.posted}}
+</p>
+
+
+
+<p>
+🛠 <b>Skills:</b>
+{{job.skills}}
+</p>
+
+
+
+<p>
+📄 <b>Description:</b>
+<br>
+
+{{job.description}}
+
+</p>
+
+
+
+
+<div class="score">
+
+
+🎯 Similarity Score:
+
+{{job.score}}
+
+
+</div>
+
+
+
+<div class="score">
+
+
+<p>
+    🔥 Skill Match:
+    <strong>{{ job.skill_match }}%</strong>
+</p>
+
+<p>
+    ✅ Matched Skills:
+    {{ job.matched_skills }}
+</p>
+
+
+</div>
+
+
+
+<a href="/recommend/{{job.id}}">
+
+<button>
+
+View Similar Jobs
+
+</button>
+
+</a>
+
+
+
+</div>
+
+
+
+{% endfor %}
+
+
+
+</div>
+
+
+</body>
+
+
+</html>
