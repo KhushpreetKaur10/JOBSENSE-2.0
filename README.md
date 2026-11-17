@@ -1,473 +1,241 @@
-# 🚀 JobSense - AI-Powered Job Search & Recommendation Engine
+# JobSense – AI Powered Semantic Job Search & Resume Matching Engine
 
-JobSense is an AI-powered semantic job search and recommendation system built using **Flask**, **Sentence Transformers**, and **FAISS**. Instead of relying on exact keyword matching, it understands the meaning of a user's query and retrieves the most relevant jobs using vector similarity search.
+JobSense is a Flask-based job search and recommendation system that uses **Sentence Transformers, FAISS, and Gemini API** to help users discover relevant job opportunities and evaluate resume compatibility.
 
-The system also provides **job-to-job recommendations**, **skill matching**, and rich job metadata such as salary, company ratings, reviews, and posting date.
+Instead of relying only on exact keyword matching, JobSense uses semantic embeddings to retrieve relevant job listings based on the meaning of a search query. It also supports resume-based job recommendations, skill gap analysis, and retrieval-augmented question answering.
 
----
+## Features
 
-# ✨ Features
+### 1. Semantic Job Search
+- Search job listings using natural language queries.
+- Generate query embeddings using `all-MiniLM-L6-v2`.
+- Retrieve relevant jobs using FAISS vector similarity search.
+- Display job details including title, company, location, salary, experience, skills, and description.
 
-## 🔍 Semantic Job Search
+### 2. Similar Job Recommendations
+- Retrieve jobs similar to a selected listing.
+- Use precomputed job embeddings and FAISS similarity search.
+- Display similarity scores for recommended jobs.
 
-Search jobs using natural language queries such as:
+### 3. Resume Analysis and Job Matching
+- Upload resumes in PDF format.
+- Extract resume text using PyMuPDF.
+- Identify technical skills using a custom skill-matching module.
+- Recommend relevant jobs based on resume content.
+- Calculate skill coverage and identify missing skills.
+- Evaluate experience compatibility when experience information is available.
+- Rank recommendations using skill coverage, semantic similarity, and experience compatibility.
 
-- Python Developer
-- Data Scientist
-- Machine Learning Engineer
-- React Developer
-- Backend Developer
-- Flask REST API Developer
+### 4. Retrieval-Augmented Job Q&A
+- Ask questions about job listings using natural language.
+- Retrieve relevant job records using semantic search.
+- Use the Gemini API to generate answers based on retrieved job information.
 
-The query is converted into an embedding using a transformer model and matched against job embeddings using FAISS cosine similarity search.
+### 5. Skill Matching
+- Extract technical skills from queries, resumes, and job descriptions.
+- Normalize supported skill aliases.
+- Identify matched and missing skills.
+- Calculate skill coverage percentages.
 
----
+## System Architecture
 
-## 🤖 AI-Powered Recommendations
+### Semantic Job Search
 
-Each job result includes a **View Similar Jobs** button.
+    User Query
+         |
+         v
+    Sentence Transformer
+         |
+         v
+    Query Embedding
+         |
+         v
+    FAISS Vector Search
+         |
+         v
+    Relevant Job Listings
+         |
+         v
+    Flask Results Page
 
-The recommendation engine:
+### Resume Matching
 
-- Finds semantically similar jobs
-- Uses vector similarity search
-- Returns the most relevant jobs based on job content
-- Shows similarity scores for each recommendation
+    PDF Resume
+         |
+         v
+    Text Extraction (PyMuPDF)
+         |
+         v
+    Technical Skill Extraction
+         |
+         v
+    Semantic Job Retrieval
+         |
+         v
+    Skill & Experience Comparison
+         |
+         v
+    Ranked Job Recommendations
 
----
+### Retrieval-Augmented Q&A
 
-## 🎯 Similarity Scoring
+    User Question
+         |
+         v
+    Semantic Retrieval
+         |
+         v
+    Relevant Job Records
+         |
+         v
+    Gemini API
+         |
+         v
+    Generated Answer
 
-Each search result displays:
+## Tech Stack
 
-- Semantic similarity score
-- AI-generated relevance ranking
+| Category | Technologies |
+|---|---|
+| Backend | Python, Flask |
+| Semantic Search | Sentence Transformers |
+| Embedding Model | all-MiniLM-L6-v2 |
+| Vector Search | FAISS |
+| Data Processing | Pandas, NumPy |
+| Resume Parsing | PyMuPDF |
+| LLM Integration | Gemini API |
+| Frontend | HTML, CSS, Jinja2 |
+| Testing | Pytest |
+| Configuration | Python-dotenv |
 
-Example:
+## Dataset
 
-```text
-Similarity Score: 0.82
-```
+The project uses a job listings dataset containing approximately **97,929 original records**.
 
-Higher scores indicate stronger semantic relevance between the query and the job posting.
+A processed dataset of **30,000 job listings** is used by the application.
 
----
+The dataset contains fields such as:
 
-## 🔥 Dynamic Skill Matching
-
-The application calculates a skill match percentage based on the user's search query.
-
-Example:
-
-```text
-Query:
-python backend developer
-```
-
-Matched against:
-
-```text
-Python, Flask, REST API
-```
-
-Output:
-
-```text
-Skill Match: 33.3%
-Matched Skills: python
-```
-
-Example:
-
-```text
-Query:
-data scientist
-```
-
-Job Title:
-
-```text
-Data Scientist
-```
-
-Output:
-
-```text
-Skill Match: 100%
-Matched Skills: data, scientist
-```
-
-Unlike static keyword matching, JobSense dynamically analyzes the query terms and compares them against job titles, skills, and descriptions.
-
----
-
-## 📊 Rich Job Metadata
-
-Every result displays:
-
-- Job Title
-- Company Name
-- Location
-- Experience Required
-- Salary Information
-- Company Rating
-- Review Count
-- Job Posting Date
+- Job title and ID
+- Company
 - Skills
-- Description
-- Similarity Score
-- Skill Match Percentage
-- Matched Skills
-
----
-
-## 🧹 Data Cleaning Pipeline
-
-The preprocessing pipeline:
-
-- Removes duplicate jobs
-- Removes missing descriptions
-- Cleans HTML tags
-- Removes unnecessary whitespace
-- Samples 30,000 jobs
-- Preserves important metadata
-
-Example HTML cleanup:
-
-```html
-<p>Python Developer</p><br>
-```
-
-Becomes:
-
-```text
-Python Developer
-```
-
----
-
-# 🏗️ Project Architecture
-
-```text
-User Query
-     │
-     ▼
-Sentence Transformer
-     │
-     ▼
-Query Embedding
-     │
-     ▼
-FAISS Similarity Search
-     │
-     ▼
-Top Matching Jobs
-     │
-     ├── Similarity Score
-     ├── Skill Match
-     └── Similar Job Recommendations
-```
-
----
-
-# 📂 Project Structure
-
-```text
-AI-Powered Job Search & Recommendation Engine
-│
-├── app.py
-│
-├── data
-│   ├── jobs.xlsx
-│   └── jobs_30k.csv
-│
-├── models
-│   ├── embeddings.npy
-│   └── faiss_index.bin
-│
-├── services
-│   ├── embedder.py
-│   ├── build_index.py
-│   └── skill_matcher.py
-│
-├── utils
-│   └── preprocess.py
-│
-├── static
-│   └── style.css
-│
-├── templates
-│   ├── index.html
-│   ├── results.html
-│   └── recommendations.html
-│
-├── checkdb.py
-│
-└── README.md
-```
+- Experience requirements
+- Salary information
+- Location
+- Job description
+- Company ratings and reviews
+- Job posting date
 
----
-
-# 🛠️ Tech Stack
-
-## Backend
-
-- Flask
+## Project Structure
 
-## Machine Learning
+    AI-Powered Job Search & Recommendation Engine/
+    |
+    ├── app.py
+    |
+    ├── data/
+    │   └── jobs_30k.csv
+    |
+    ├── models/
+    │   ├── embeddings.npy
+    │   └── faiss_index.bin
+    |
+    ├── services/
+    │   ├── rag_service.py
+    │   ├── llm_service.py
+    │   ├── skills.py
+    │   ├── matching_service.py
+    │   ├── recommender.py
+    │   └── resume_service.py
+    |
+    ├── templates/
+    │   ├── index.html
+    │   ├── results.html
+    │   └── recommendations.html
+    |
+    ├── static/
+    │   └── style.css
+    |
+    ├── requirements.txt
+    ├── .env
+    └── README.md
 
-- Sentence Transformers
-- all-MiniLM-L6-v2
+## Setup and Installation
 
-## Vector Search
+### 1. Clone the Repository
 
-- FAISS
+    git clone https://github.com/KhushpreetKaur10/JobSense-AI-Job-Search-Engine.git
 
-## Data Processing
+    cd JobSense-AI-Job-Search-Engine
 
-- Pandas
-- NumPy
+### 2. Create a Virtual Environment
 
-## Frontend
+    python -m venv venv
 
-- HTML
-- CSS
-- Jinja2 Templates
+Activate it on Windows:
 
----
+    venv\Scripts\activate
 
-# 📦 Dataset
+### 3. Install Dependencies
 
-Original Dataset Size:
+    pip install -r requirements.txt
 
-```text
-97,929 jobs
-```
+### 4. Configure Environment Variables
 
-Processed Dataset:
+Create a `.env` file in the project root:
 
-```text
-30,000 jobs
-```
+    GEMINI_API_KEY=your_gemini_api_key
 
-Stored Columns:
+Do not commit API keys or other secrets to GitHub.
 
-```text
-title
-jobId
-company
-skills
-experience
-salary
-location
-description
-minimumSalary
-maximumSalary
-minimumExperience
-maximumExperience
-jobUploaded
-ReviewsCount
-AggregateRating
-```
+### 5. Prepare Project Files
 
----
+Ensure the following files are available:
 
-# ⚙️ Preprocessing
+    data/jobs_30k.csv
+    models/embeddings.npy
+    models/faiss_index.bin
 
-Run:
+The dataset, embeddings, and FAISS index must correspond to the same job records and ordering.
 
-```bash
-python utils/preprocess.py
-```
+### 6. Run the Application
 
-Output:
+    python app.py
 
-```text
-data/jobs_30k.csv
-```
+Open the application at:
 
-This step:
+    http://127.0.0.1:5000
 
-- Cleans HTML
-- Removes duplicates
-- Filters invalid jobs
-- Keeps important metadata columns
+## API Endpoints
 
----
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/` | GET | Display the home page |
+| `/search` | GET | Search for relevant jobs |
+| `/recommend/<job_id>` | GET | Retrieve similar jobs |
+| `/ask` | POST | Ask job-related questions |
+| `/match-resume` | POST | Upload a PDF resume and retrieve matching jobs |
 
-# 🧠 Generate Embeddings
+## Testing
 
-Run:
+Run the test suite:
 
-```bash
-python services/embedder.py
-```
+    pytest -v
 
-This:
+Additional integration tests:
 
-- Loads cleaned jobs
-- Creates semantic embeddings
-- Normalizes vectors
-- Saves embeddings
+    python test_resume_api.py
+    python test_rag.py
 
-Output:
-
-```text
-models/embeddings.npy
-```
-
-Embedding Dimension:
-
-```text
-384
-```
-
----
-
-# ⚡ Build FAISS Index
-
-Run:
-
-```bash
-python services/build_index.py
-```
-
-Output:
-
-```text
-models/faiss_index.bin
-```
-
-Used for ultra-fast similarity search.
-
----
-
-# 🚀 Start Application
-
-Run:
-
-```bash
-python app.py
-```
-
-Open:
-
-```text
-http://127.0.0.1:5000
-```
-
----
-
-# 🔎 Example Searches
-
-## Example 1
-
-Query:
-
-```text
-python developer
-```
-
-Possible Results:
-
-```text
-Python Developer
-Backend Engineer
-Flask Developer
-API Developer
-```
-
----
-
-## Example 2
-
-Query:
-
-```text
-data scientist
-```
-
-Possible Results:
-
-```text
-Data Scientist
-Machine Learning Engineer
-AI Engineer
-Data Science Consultant
-```
-
----
-
-## Example 3
-
-Query:
-
-```text
-react developer
-```
-
-Possible Results:
-
-```text
-React Developer
-Frontend Engineer
-React Native Developer
-JavaScript Developer
-```
-
----
-
-# 📈 Recommendation Engine
-
-For every job result:
-
-```text
-View Similar Jobs
-```
-
-The system:
-
-1. Takes the selected job embedding
-2. Searches the FAISS index
-3. Retrieves nearest job vectors
-4. Displays recommended jobs
-
-Example URL:
-
-```text
-/recommend/100
-```
-
-Meaning:
-
-```text
-Show jobs similar to job with ID 100
-```
-
----
-
-# 🌟 Future Enhancements
-
-- Resume Upload
-- Resume-to-Job Matching
-- Skill Gap Analysis
-- Salary Prediction
-- Personalized Recommendations
-- Job Bookmarking
-- User Authentication
-- Application Tracking Dashboard
-- Hybrid Search (Semantic + Keyword)
-- LLM-Based Job Summaries
-
----
-
-# 👩‍💻 Author
+## Author
 
 **Khushpreet Kaur**
 
+B.E. Computer Science & Engineering
+
+GitHub: [KhushpreetKaur10](https://github.com/KhushpreetKaur10)
 
 ---
 
-# 📄 License
+## License
 
 This project is developed for educational, research, and portfolio purposes.
