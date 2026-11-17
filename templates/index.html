@@ -1,55 +1,756 @@
+﻿
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-    <title>JobSense AI</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobSense - AI Job Search Engine</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
 
-</head>
+    <style>
+        .section {
+            margin: 35px auto;
+            max-width: 1100px;
+            padding: 25px;
+            border-radius: 12px;
+            background: white;
+        }
 
+        .section h2 {
+            margin-bottom: 15px;
+        }
+
+        .section-description {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .input-row input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .input-row button,
+        .action-button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+            font-weight: 600;
+        }
+
+        .input-row button:hover,
+        .action-button:hover {
+            background: #1d4ed8;
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .suggestions button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background: #f8fafc;
+            cursor: pointer;
+        }
+
+        .suggestions button:hover {
+            background: #e2e8f0;
+        }
+
+        .chat-box {
+            margin-top: 20px;
+        }
+
+        .chat-answer {
+            padding: 15px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        .job-card {
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .job-card h3 {
+            margin-top: 0;
+            color: #1e40af;
+        }
+
+        .job-meta {
+            color: #64748b;
+            margin: 8px 0;
+        }
+
+        .skill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin: 10px 0;
+        }
+
+        .skill-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 13px;
+            background: #e0f2fe;
+            color: #075985;
+        }
+
+        .matched-skill {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .missing-skill {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .coverage-track {
+            width: 100%;
+            height: 10px;
+            margin: 8px 0 15px;
+            border-radius: 10px;
+            background: #e5e7eb;
+            overflow: hidden;
+        }
+
+        .coverage-fill {
+            height: 100%;
+            background: #16a34a;
+            border-radius: 10px;
+        }
+
+        .status-message {
+            margin-top: 15px;
+            color: #475569;
+        }
+
+        .error-message {
+            color: #dc2626;
+        }
+
+        .success-message {
+            color: #15803d;
+        }
+
+        .source-card {
+            padding: 12px;
+            margin-top: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .resume-upload {
+            margin: 15px 0;
+        }
+
+        .resume-upload input {
+            padding: 10px;
+            max-width: 100%;
+        }
+
+        .resume-skills {
+            margin: 15px 0;
+        }
+
+        .empty-message {
+            color: #64748b;
+            padding: 12px 0;
+        }
+
+        @media (max-width: 600px) {
+            .section {
+                padding: 15px;
+                margin: 15px;
+            }
+
+            .input-row {
+                flex-direction: column;
+            }
+
+            .input-row button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
 
 <body>
 
+    <header class="hero">
+        <h1>JobSense</h1>
+        <p>Semantic Job Search and Resume-Based Job Matching</p>
+    </header>
 
-<div class="hero">
+    <main>
 
+        <!-- SEMANTIC JOB SEARCH -->
+        <section class="section">
+            <h2>Search Jobs</h2>
 
-    <h1>
-        🚀 JobSense AI
-    </h1>
+            <p class="section-description">
+                Search for jobs using natural language and find relevant opportunities.
+            </p>
 
+            <form action="/search" method="GET">
+                <div class="input-row">
+                    <input
+                        type="text"
+                        name="query"
+                        placeholder="Example: Python backend developer with Flask and MySQL"
+                        required
+                    >
 
-    <p>
-        Semantic Job Search & Recommendation Engine
-    </p>
-
-
-    <form action="/search" method="get">
-
-
-        <input
-            type="text"
-            name="query"
-            placeholder="Search jobs e.g. Python Developer, ML Engineer..."
-            required
-        >
-
-
-        <button>
-            Search Jobs
-        </button>
-
-
-    </form>
+                    <button type="submit">Search Jobs</button>
+                </div>
+            </form>
+        </section>
 
 
-</div>
+        <!-- RAG JOB ASSISTANT -->
+        <section class="section">
+            <h2>JobSense AI Assistant</h2>
+
+            <p class="section-description">
+                Ask questions about job roles, skills, experience requirements,
+                and salaries using information retrieved from the job dataset.
+            </p>
+
+            <div class="input-row">
+                <input
+                    type="text"
+                    id="questionInput"
+                    placeholder="Ask something about jobs..."
+                >
+
+                <button type="button" id="askButton">
+                    Ask
+                </button>
+            </div>
+
+            <div class="suggestions">
+                <button type="button"
+                        class="suggestion"
+                        data-question="What skills are required for Python backend developer jobs?">
+                    Python backend skills
+                </button>
+
+                <button type="button"
+                        class="suggestion"
+                        data-question="What are the most common skills required for software developer jobs?">
+                    Common developer skills
+                </button>
+
+                <button type="button"
+                        class="suggestion"
+                        data-question="What experience is required for entry-level software jobs?">
+                    Entry-level requirements
+                </button>
+            </div>
+
+            <div class="chat-box">
+                <p id="askStatus" class="status-message"></p>
+
+                <div id="answerContainer"></div>
+
+                <div id="sourcesContainer"></div>
+            </div>
+        </section>
 
 
+        <!-- RESUME MATCHING -->
+        <section class="section">
+            <h2>Resume-Based Job Recommendations</h2>
+
+            <p class="section-description">
+                Upload your PDF resume to extract technical skills and discover
+                relevant job opportunities.
+            </p>
+
+            <form id="resumeForm">
+                <div class="resume-upload">
+                    <input
+                        type="file"
+                        id="resumeFile"
+                        name="resume"
+                        accept=".pdf,application/pdf"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="action-button" id="resumeButton">
+                    Analyze Resume
+                </button>
+            </form>
+
+            <p id="resumeStatus" class="status-message"></p>
+
+            <div id="resumeSkillsContainer"></div>
+
+            <div id="recommendationsContainer"></div>
+        </section>
+
+    </main>
+
+
+    <script>
+        // ------------------------------------------------
+        // COMMON HELPERS
+        // ------------------------------------------------
+
+        function createElement(tag, className, text) {
+            const element = document.createElement(tag);
+
+            if (className) {
+                element.className = className;
+            }
+
+            if (text !== undefined && text !== null) {
+                element.textContent = String(text);
+            }
+
+            return element;
+        }
+
+        function displaySkills(container, skills, badgeClass = "") {
+            container.replaceChildren();
+
+            if (!Array.isArray(skills) || skills.length === 0) {
+                container.appendChild(
+                    createElement("p", "empty-message", "None available.")
+                );
+                return;
+            }
+
+            const list = createElement("div", "skill-list");
+
+            skills.forEach(skill => {
+                list.appendChild(
+                    createElement(
+                        "span",
+                        `skill-badge ${badgeClass}`,
+                        skill
+                    )
+                );
+            });
+
+            container.appendChild(list);
+        }
+
+
+        // ------------------------------------------------
+        // RAG ASSISTANT
+        // ------------------------------------------------
+
+        const questionInput = document.getElementById("questionInput");
+        const askButton = document.getElementById("askButton");
+        const askStatus = document.getElementById("askStatus");
+        const answerContainer = document.getElementById("answerContainer");
+        const sourcesContainer = document.getElementById("sourcesContainer");
+
+        async function askQuestion() {
+            const query = questionInput.value.trim();
+
+            if (!query) {
+                askStatus.textContent = "Please enter a question.";
+                return;
+            }
+
+            askButton.disabled = true;
+            askStatus.textContent = "Searching relevant jobs...";
+            answerContainer.replaceChildren();
+            sourcesContainer.replaceChildren();
+
+            try {
+                const response = await fetch("/ask", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        query: query
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || "Unable to process question.");
+                }
+
+                askStatus.textContent = "";
+
+                const answerHeading = createElement("h3", "", "Answer");
+                answerContainer.appendChild(answerHeading);
+
+                answerContainer.appendChild(
+                    createElement("div", "chat-answer", data.answer || "No answer returned.")
+                );
+
+                const sources = data.sources || [];
+
+                if (sources.length > 0) {
+                    sourcesContainer.appendChild(
+                        createElement("h3", "", "Retrieved Job Sources")
+                    );
+
+                    sources.forEach(job => {
+                        const card = createElement("div", "source-card");
+
+                        card.appendChild(
+                            createElement("strong", "", job.title || "Unknown title")
+                        );
+
+                        card.appendChild(
+                            createElement(
+                                "p",
+                                "job-meta",
+                                `${job.company || "Unknown company"} | ${job.location || "Not specified"}`
+                            )
+                        );
+
+                        if (job.skills) {
+                            card.appendChild(
+                                createElement("p", "", `Skills: ${job.skills}`)
+                            );
+                        }
+
+                        if (job.similarity_score != null) {
+                            card.appendChild(
+                                createElement(
+                                    "p",
+                                    "",
+                                    `Semantic similarity: ${Number(job.similarity_score).toFixed(4)}`
+                                )
+                            );
+                        }
+
+                        sourcesContainer.appendChild(card);
+                    });
+                }
+
+            } catch (error) {
+                askStatus.textContent = error.message;
+                askStatus.className = "status-message error-message";
+
+            } finally {
+                askButton.disabled = false;
+            }
+        }
+
+        askButton.addEventListener("click", askQuestion);
+
+        questionInput.addEventListener("keydown", event => {
+            if (event.key === "Enter") {
+                askQuestion();
+            }
+        });
+
+        document.querySelectorAll(".suggestion").forEach(button => {
+            button.addEventListener("click", () => {
+                questionInput.value = button.dataset.question;
+                askQuestion();
+            });
+        });
+
+
+        // ------------------------------------------------
+        // RESUME RECOMMENDATIONS
+        // ------------------------------------------------
+
+        const resumeForm = document.getElementById("resumeForm");
+        const resumeFile = document.getElementById("resumeFile");
+        const resumeButton = document.getElementById("resumeButton");
+
+        const resumeStatus = document.getElementById("resumeStatus");
+        const resumeSkillsContainer =
+            document.getElementById("resumeSkillsContainer");
+
+        const recommendationsContainer =
+            document.getElementById("recommendationsContainer");
+
+
+        function renderRecommendation(job) {
+            const card = createElement("div", "job-card");
+
+            // Job title
+            card.appendChild(
+                createElement("h3", "", job.title || "Unknown title")
+            );
+
+            // Company and location
+            card.appendChild(
+                createElement(
+                    "p",
+                    "job-meta",
+                    `${job.company || "Unknown company"} | ${job.location || "Not specified"}`
+                )
+            );
+
+            // Ranking score
+            const rankingScore = Number(job.ranking_score);
+
+            const rankingLabel = createElement(
+                "strong",
+                "",
+                `Ranking score: ${
+                    Number.isFinite(rankingScore)
+                        ? rankingScore.toFixed(2)
+                        : "N/A"
+                }/100`
+            );
+
+            card.appendChild(rankingLabel);
+
+            // Skill coverage
+            const coverageLabel = createElement(
+                "p",
+                "",
+                job.coverage_percentage == null
+                    ? "Skill coverage unavailable"
+                    : `Skill coverage: ${Number(job.coverage_percentage).toFixed(2)}%`
+            );
+
+            card.appendChild(coverageLabel);
+
+            // Coverage progress bar only when coverage is available
+            if (job.coverage_percentage != null) {
+                const coverage = Math.max(
+                    0,
+                    Math.min(100, Number(job.coverage_percentage))
+                );
+
+                const track = createElement("div", "coverage-track");
+                const fill = createElement("div", "coverage-fill");
+
+                fill.style.width = `${coverage}%`;
+
+                track.appendChild(fill);
+                card.appendChild(track);
+            }
+
+            // Semantic similarity
+            if (job.similarity_score != null) {
+                card.appendChild(
+                    createElement(
+                        "p",
+                        "",
+                        `Semantic similarity: ${Number(job.similarity_score).toFixed(4)}`
+                    )
+                );
+            }
+            // Experience compatibility
+            const experienceLabel = createElement(
+                "p",
+                "",
+                job.experience_score == null
+                    ? "Experience compatibility: Unavailable"
+                    : `Experience compatibility: ${Number(job.experience_score).toFixed(2)}/100`
+            );
+
+            card.appendChild(experienceLabel);
+
+            // Required skills
+            card.appendChild(
+                createElement("h4", "", "Required Skills")
+            );
+
+            const requiredContainer = createElement("div");
+
+            displaySkills(
+                requiredContainer,
+                job.required_skills || []
+            );
+
+            card.appendChild(requiredContainer);
+
+            // Matched skills
+            card.appendChild(
+                createElement("h4", "", "Matched Skills")
+            );
+
+            const matchedContainer = createElement("div");
+
+            displaySkills(
+                matchedContainer,
+                job.matched_skills || [],
+                "matched-skill"
+            );
+
+            card.appendChild(matchedContainer);
+
+            // Missing skills
+            card.appendChild(
+                createElement("h4", "", "Missing Skills")
+            );
+
+            const missingContainer = createElement("div");
+
+            displaySkills(
+                missingContainer,
+                job.missing_skills || [],
+                "missing-skill"
+            );
+
+            card.appendChild(missingContainer);
+
+            // Experience
+            if (job.experience) {
+                card.appendChild(
+                    createElement(
+                        "p",
+                        "",
+                        `Experience: ${job.experience}`
+                    )
+                );
+            }
+
+            // Salary
+            if (job.salary) {
+                card.appendChild(
+                    createElement(
+                        "p",
+                        "",
+                        `Salary: ${job.salary}`
+                    )
+                );
+            }
+
+            // Description
+            if (job.description) {
+                const description = String(job.description);
+
+                card.appendChild(
+                    createElement(
+                        "p",
+                        "",
+                        description.length > 500
+                            ? description.substring(0, 500) + "..."
+                            : description
+                    )
+                );
+            }
+
+            return card;
+        }
+
+
+        resumeForm.addEventListener("submit", async event => {
+            event.preventDefault();
+
+            const file = resumeFile.files[0];
+
+            if (!file) {
+                resumeStatus.textContent = "Please select a PDF resume.";
+                return;
+            }
+
+            if (!file.name.toLowerCase().endsWith(".pdf")) {
+                resumeStatus.textContent = "Only PDF files are supported.";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("resume", file);
+
+            resumeButton.disabled = true;
+            resumeStatus.className = "status-message";
+            resumeStatus.textContent = "Analyzing resume and finding jobs...";
+
+            resumeSkillsContainer.replaceChildren();
+            recommendationsContainer.replaceChildren();
+
+            try {
+                const response = await fetch("/match-resume", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.error || "Resume analysis failed."
+                    );
+                }
+
+                resumeStatus.className = "status-message success-message";
+                resumeStatus.textContent =
+                    `Resume analyzed successfully. ${data.total_jobs || 0} recommendations found.`;
+
+                // Extracted resume skills
+                resumeSkillsContainer.appendChild(
+                    createElement("h3", "", "Your Extracted Skills")
+                );
+
+                displaySkills(
+                    resumeSkillsContainer,
+                    data.resume_skills || []
+                );
+
+                // Recommendations
+                const recommendations = data.recommendations || [];
+
+                recommendationsContainer.appendChild(
+                    createElement(
+                        "h3",
+                        "",
+                        `Recommended Jobs (${recommendations.length})`
+                    )
+                );
+
+                if (recommendations.length === 0) {
+                    recommendationsContainer.appendChild(
+                        createElement(
+                            "p",
+                            "empty-message",
+                            "No relevant jobs were found."
+                        )
+                    );
+                } else {
+                    recommendations.forEach(job => {
+                        recommendationsContainer.appendChild(
+                            renderRecommendation(job)
+                        );
+                    });
+                }
+
+            } catch (error) {
+                resumeStatus.className = "status-message error-message";
+                resumeStatus.textContent = error.message;
+
+            } finally {
+                resumeButton.disabled = false;
+            }
+        });
+
+    </script>
 
 </body>
-
 </html>

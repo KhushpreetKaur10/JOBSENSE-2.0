@@ -1,148 +1,82 @@
+
 <!DOCTYPE html>
 <html>
-
-
 <head>
-
-
-<title>
-Similar Jobs
-</title>
-
-
-<link rel="stylesheet"
-href="{{ url_for('static', filename='style.css') }}">
-
-
+    <title>Similar Jobs | JobSense</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
 
-
-
 <body>
-
-
 <div class="container">
 
+    <h1>🚀 JobSense</h1>
+    <h2>Similar Job Recommendations</h2>
 
-<h1>
-Similar Jobs
-</h1>
+    {% macro display(value) %}
+        {% if value is none or value|string|lower in ['nan', 'none', 'nat', ''] %}
+            Not available
+        {% else %}
+            {{ value }}
+        {% endif %}
+    {% endmacro %}
 
+    {% if source_job %}
+        <div class="job-card">
+            <h3>Finding jobs similar to:</h3>
+            <h2>{{ display(source_job.title) }}</h2>
+            <p>🏢 <b>Company:</b> {{ display(source_job.company) }}</p>
+            <p>🛠 <b>Skills:</b> {{ display(source_job.skills) }}</p>
+        </div>
+    {% endif %}
 
+    {% if jobs|length == 0 %}
+        <h3>No similar jobs found.</h3>
+    {% endif %}
 
-{% for job in jobs %}
+    {% for job in jobs %}
+    <div class="job-card">
 
+        <h2>{{ display(job.title) }}</h2>
 
+        <p>🏢 <b>Company:</b> {{ display(job.company) }}</p>
+        <p>📍 <b>Location:</b> {{ display(job.location) }}</p>
+        <p>💼 <b>Experience:</b> {{ display(job.experience) }}</p>
+        <p>💰 <b>Salary:</b> {{ display(job.salary) }}</p>
+        <p>⭐ <b>Rating:</b> {{ display(job.rating) }}</p>
+        <p>👥 <b>Reviews:</b> {{ display(job.reviews) }}</p>
+        <p>📅 <b>Posted:</b> {{ display(job.posted) }}</p>
+        <p>🛠 <b>Skills:</b> {{ display(job.skills) }}</p>
 
-<div class="job-card">
+        <p>
+            📄 <b>Description:</b><br>
+            {{ display(job.description) }}
+        </p>
 
+        <div class="score">
+            <p>
+                🎯 Similarity Score:
+                <strong>{{ (job.score * 100)|round(2) }}%</strong>
+            </p>
 
-<h2>
-{{job.title}}
-</h2>
+            <p>
+                🔥 Skill Match:
+                <strong>{{ job.skill_match }}%</strong>
+            </p>
 
+            <p>
+                ✅ Matched Skills:
+                {{ display(job.matched_skills) }}
+            </p>
+        </div>
 
+    </div>
+    {% endfor %}
 
-<p>
-🏢 <b>Company:</b>
-{{job.company}}
-</p>
-
-
-<p>
-📍 <b>Location:</b>
-{{job.location}}
-</p>
-
-
-<p>
-💼 <b>Experience:</b>
-{{job.experience}}
-</p>
-
-
-
-<p>
-💰 <b>Salary:</b>
-{{job.salary}}
-</p>
-
-
-
-<p>
-⭐ <b>Rating:</b>
-{{job.rating}}
-</p>
-
-
-<p>
-👥 <b>Reviews:</b>
-{{job.reviews}}
-</p>
-
-
-<p>
-📅 <b>Posted:</b>
-{{job.posted}}
-</p>
-
-
-
-<p>
-🛠 <b>Skills:</b>
-
-{{job.skills}}
-
-</p>
-
-
-
-<p>
-
-📄 <b>Description:</b>
-
-<br>
-
-{{job.description}}
-
-</p>
-
-
-
-<div class="score">
-
-
-<p>
-    🎯 Similarity Score:
-    <b>{{ job.score }}</b>
-</p>
-
-<p>
-    🔥 Skill Match:
-    <b>{{ job.skill_match }}%</b>
-</p>
-
-<p>
-    ✅ Matched Skills:
-    <b>{{ job.matched_skills }}</b>
-</p>
-
+    <a href="{{ url_for('home') }}">
+        <button type="button">Back to Home</button>
+    </a>
 
 </div>
-
-
-
-</div>
-
-
-
-{% endfor %}
-
-
-</div>
-
-
 </body>
-
-
 </html>

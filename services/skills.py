@@ -1,3 +1,4 @@
+﻿
 import re
 
 
@@ -57,6 +58,29 @@ class SkillMatcher:
             "spark",
             "hadoop"
         }
+        self.skill_aliases = {
+            "reactjs": "react",
+            "react.js": "react",
+            "node.js": "nodejs",
+            "node js": "nodejs",
+            "javascript": "javascript",
+            "rest api": "rest api",
+            "apis": "rest api"
+        }
+        # Compile patterns once instead of on every extraction.
+        self.skill_patterns = {
+            skill: re.compile(
+                r"(?<![a-z0-9])"
+                + re.escape(skill)
+                + r"(?![a-z0-9])",
+                re.IGNORECASE
+            )
+            for skill in sorted(
+                self.skill_bank,
+                key=len,
+                reverse=True
+            )
+        }
 
     def clean_text(self, text):
 
@@ -64,24 +88,29 @@ class SkillMatcher:
 
         text = re.sub(r"<.*?>", " ", text)
 
-        text = re.sub(r"[^a-z0-9+#.\-\s]", " ", text)
+        text = re.sub(
+            r"[^a-z0-9+#.\-\s/]",
+            " ",
+            text
+        )
 
         text = re.sub(r"\s+", " ", text)
 
         return text.strip()
 
     def extract_skills(self, text):
-
         text = self.clean_text(text)
 
         found = []
 
-        for skill in self.skill_bank:
+        for skill, pattern in self.skill_patterns.items():
+            if pattern.search(text):
+                canonical_skill = self.skill_aliases.get(skill, skill)
 
-            if skill.lower() in text:
-                found.append(skill.lower())
+                if canonical_skill not in found:
+                    found.append(canonical_skill)
 
-        return list(set(found))
+        return found
 
     def match_score(self, query, job_text):
 
@@ -101,18 +130,12 @@ class SkillMatcher:
         )
 
         score = (
-            len(matched)
-            /
-            len(query_skills)
+            len(matched) / len(query_skills)
         ) * 100
 
         return round(score, 2)
 
-    def get_matched_skills(
-        self,
-        query,
-        job_text
-    ):
+    def get_matched_skills(self, query, job_text):
 
         query_skills = set(
             self.extract_skills(query)
@@ -122,8 +145,6 @@ class SkillMatcher:
             self.extract_skills(job_text)
         )
 
-        return list(
-            query_skills.intersection(
-                job_skills
-            )
+        return sorted(
+            query_skills.intersection(job_skills)
         )

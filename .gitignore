@@ -1,17 +1,30 @@
-__pycache__/
-*.pyc
+# Environment variables and secrets
+.env
+.env.*
 
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
 .venv/
 venv/
 env/
 
+# Jupyter
 .ipynb_checkpoints/
 
+# Generated model files and datasets
 models/embeddings.npy
 models/faiss_index.bin
-
 data/jobs.xlsx
 data/jobs_30k.csv
 
+# Uploaded files
+uploads/*
+!uploads/.gitkeep
+
+# OS files
 .DS_Store
 Thumbs.db
+
+data/*.pdf
